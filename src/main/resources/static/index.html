@@ -14,62 +14,101 @@
 
 <body>
 
-<div class="container" ng-controller="indexController">
+<div class="container" ng-controller="productController">
     <h1>April Market</h1>
-
-    <table class="table">
+    <table cellpadding="5px">
         <thead>
-        <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Title</th>
-            <th scope="col">Price</th>
-            <th scope="col">Actions</th>
-        </tr>
+        <th>Id продукта</th>
+        <th>Наименование продукта</th>
+        <th>Цена продукта</th>
+        <th>Категория продукта</th>
+        <th>Действия</th>
         </thead>
         <tbody>
-        <tr ng-repeat="p in products">
+        <tr ng-repeat="p in productsPage.content">
             <td>{{p.id}}</td>
             <td>{{p.title}}</td>
             <td>{{p.price}}</td>
+            <td>{{p.categoryTitle}}</td>
             <td>
-                <button class="btn btn-info" ng-click="addProductInCart(p)">Add to cart</button>
-<!--                <button class="btn btn-danger" ng-click="pingProduct(p.id)">Ping</button>-->
+                <button class="btn btn-danger" ng-click="clickOnProduct(p)">Console info??</button>
+                <button class="btn btn-danger" ng-click="addProduct(p.id)">Add product to Cart</button>
             </td>
         </tr>
         </tbody>
     </table>
 
-    <button class="btn btn-primary" ng-click="init()">Refresh</button>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li ng-class="productsPage.first ? 'page-item disabled' : 'page-item'">
+                <a class="page-link" ng-click="loadPage(productsPage.number)">Пред.</a>
+            </li>
 
-    <div>
-        <form novalidate ng-submit="createNewProduct()">
-            <div class="mb-3">
-                <label for="inputTitle" class="form-label">Title</label>
-                <input type="text" class="form-control" ng-model="newProduct.title" id="inputTitle" aria-describedby="titleHelp">
-            </div>
-            <div class="mb-3">
-                <label for="inputPrice" class="form-label">Price</label>
-                <input type="number" class="form-control" ng-model="newProduct.price" id="inputPrice" aria-describedby="priceHelp">
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    </div>
-    <h1>Product cart</h1>
-    <table class="table">
-    <thead>
-    <tr>
-        <th scope="col">ID</th>
-        <th scope="col">Title</th>
-        <th scope="col">Price</th>
-        <th scope="col">Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr ng-repeat="p to addProductInCart(p)">
-        <td>{{p.id}}</td>
-        <td>{{p.title}}</td>
-        <td>{{p.price}}</td>
+            <li ng-class="productsPage.number == pageIndex - 1 ? 'page-item active' : 'page-item'"
+                ng-repeat="pageIndex in paginationArray">
+                <a class="page-link" ng-click="loadPage(pageIndex)">{{pageIndex}}</a>
+            </li>
+
+            <li ng-class="productsPage.last ? 'page-item disabled' : 'page-item'">
+                <a class="page-link" ng-click="loadPage(productsPage.number + 2)">След.</a>
+            </li>
+        </ul>
+    </nav>
+
+    <button class="btn btn-primary" ng-click="loadPage(1)">Refresh</button>
+    <br><br>
+
+    <form novalidate ng-submit="createNewProduct()">
+        <div class="mb-3">
+            <label class="inputTitle" class="form-label">Title</label>
+            <input type="text" class="form-control" ng-model="newProduct.title" id="inputTitle"
+                   aria-describedby="titleHelp">
+        </div>
+        <div class="mb-3">
+            <label for="inputPrice" class="form-label">Price</label>
+            <input type="number" class="form-control" ng-model="newProduct.price" id="inputPrice"
+                   aria-describedby="titleHelp">
+        </div>
+        <!--            <div class="mb-3">-->
+        <label for="inputCategory" class="form-label">Choose Category</label>
+        <select class="form-select" ng-model="newProduct.categoryTitle" id="inputCategory"  aria-label="Default select example">
+            <option value="Food">Food</option>
+
+        </select>
+        <!--            </div>-->
+
+        <br><br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <hr>
+
+    <h1>Product Cart</h1>
+    <table cellpadding="5px">
+        <thead>
+        <th>Id продукта</th>
+        <th>Наименование продукта</th>
+        <th>Цена продукта</th>
+        <th>Категория продукта</th>
+        <th>Действия</th>
+        </thead>
+        <tbody>
+        <tr ng-repeat="i in cart">
+            <td>{{i.id}}</td>
+            <td>{{i.title}}</td>
+            <td>{{i.price}}</td>
+            <td>{{i.categoryTitle}}</td>
+            <td>
+                <button class="btn btn-danger" ng-click="deleteItem(i.id)">Delete product</button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3"><b>Общая стоимость продуктов в корзине</b></td>
+            <td><b>{{itemsSum}}</b></td>
+        </tr>
+        </tbody>
+    </table>
+    <button class="btn btn-primary" ng-click="cartShow()">Refresh</button>
 </div>
-<button class="btn btn-primary" ng-click="clearCart()">Clear</button>
 </body>
 </html>

@@ -3,8 +3,13 @@ package ru.geekbrains.april.market.controllers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.geekbrains.april.market.dtos.ProductDto;
 import ru.geekbrains.april.market.models.Product;
+import ru.geekbrains.april.market.services.ProductService;
 import ru.geekbrains.april.market.utils.Cart;
+import ru.geekbrains.april.market.dto.CartDto;
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/v1/cart")
@@ -12,19 +17,30 @@ import ru.geekbrains.april.market.utils.Cart;
 @Slf4j
 public class CartController {
     private final Cart cart;
+    //    private final CartDto cartDto;
+    private final ProductService productService;
 
-    @GetMapping("/ping")
-    public void ping(@RequestParam Long id) {
-        log.info("ping: " + id);
+
+    @GetMapping()
+    public List<ProductDto> getCartDto() {
+        CartDto cartDto=new CartDto(cart);
+        return cartDto.getCartDtoItems();
     }
 
-    @PostMapping("/add/{id}")
-    public void addProductInCart(@RequestBody Long id, String title, int price) {
-        Product product = new Product(id, title, price);
-        cart.addProduct(id);
+    @GetMapping("/add")
+    public int add(@RequestParam Long id) {
+        log.info("add to cart product with id=" + id);
+        return cart.addItem(productService.findProductByID(id).get());
     }
-    @DeleteMapping
-    public void deleteAllCart() {
-        cart.clearCart();
+
+    @GetMapping("/delete")
+    public int deleteProductFromCart(@RequestParam Long id) {
+        log.info("delete from cart product with id=" + id);
+        return cart.deleteItem(id);
+    }
+
+    @GetMapping("/summ")
+    public int summCart() {
+        return cart.sumItems();
     }
 }
